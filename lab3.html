@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<!--
+ @license
+ Copyright 2019 Google LLC. All Rights Reserved.
+ SPDX-License-Identifier: Apache-2.0
+ https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+      let responses = {correct: 0, incorrect: 0};
+      let map;
+      let locationBorder;
+
+      // Initialize and add the map
+      function initMap() {
+        // The location of Uluru
+        const uluru = { lat: 34.239556, lng: -118.528124 };
+        // The map, centered at Uluru
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 16,
+          zoomControl: false,
+          center: uluru,
+          gestureHandling: 'none',
+          clickableIcons: false,
+          streetViewControl: false,
+          panControl: false,
+          rotateControl: false,
+          fullscreenControl: false,
+          mapTypeId: 'satellite',
+          mapTypeControlOptions: { mapTypeIds: ['roadmap', 'satellite'] },
+          styles: [{
+            featureType: 'all',
+            elementType: 'labels',
+            stylers: [{
+              visibility: 'off'
+              },]
+            },
+            {
+            featureType: 'road',
+            elementType: 'labels',
+            stylers: [{
+              visibility: 'on'
+            },]
+          }]
+        });
+
+        
+      }
+
+      function question1() {
+        let answered = false;
+        $('#questionHeader').append('Question 1')
+        $('#questions').append('<p>Where is Jacaranda Hall?</p>')
+
+        const jacarandaCoordinates = [
+          { lat: 34.24109113944447, lng: -118.52946510516229 },
+          { lat: 34.24107340087325, lng: -118.52787723742547 },
+          { lat: 34.24210223182557, lng: -118.52787723742547 },
+          { lat: 34.24210223182557, lng: -118.5287999173266 },
+          { lat: 34.24201353999737, lng: -118.52882137499871 },
+          { lat: 34.24199580162052, lng: -118.5291432400805 },
+          { lat: 34.24174746395211, lng: -118.52946510516229 },
+          { lat: 34.24109113944447, lng: -118.52946510516229 },
+        ];
+
+        const jacarandaPolygon = new google.maps.Polygon({ paths: jacarandaCoordinates });
+
+         const mapListener = map.addListener('dblclick', (e) => {
+           console.log(e.latLng.lat())
+          checkResponse(jacarandaCoordinates, google.maps.geometry.poly.containsLocation(e.latLng, jacarandaPolygon));
+          
+          document.getElementById('continue').addEventListener('click', () => {
+            $('#questions h2').remove();
+            $('#questions p').remove();
+            question2();
+          });
+        });
+      }
+
+      function question2() {
+        $('#questions button').remove();
+        $('#questions').append('<h2 id="quizHeader">Question 2</h2>');
+        $('#questions').append('<p>Where is the Oviatt Library?</p>');
+
+        const oviattLibraryCoordinates = [
+          { lat: 34.24043480981954, lng: -118.53001227514649 },
+          { lat: 34.2399381245397, lng: -118.53001227514649 },
+          { lat: 34.239920385725505, lng: -118.52975478308106 },
+          { lat: 34.23981395276183, lng: -118.52975478308106 },
+          { lat: 34.23981395276183, lng: -118.52893939154053 },
+          { lat: 34.239902646907574, lng: -118.52891793386841 },
+          { lat: 34.239902646907574, lng: -118.52866044180298 },
+          { lat: 34.24043480981954, lng: -118.52863898413086 },
+          { lat: 34.24043480981954, lng: -118.53001227514649 },
+
+        ];
+
+        const oviattLibraryPolygon = new google.maps.Polygon({ paths: oviattLibraryCoordinates });
+
+        map.addListener('dblclick', (e) => {
+          locationBorder.setMap(null);
+          checkResponse(oviattLibraryCoordinates, google.maps.geometry.poly.containsLocation(e.latLng, oviattLibraryPolygon));
+          document.getElementById('continue').addEventListener('click', () => {
+            $('#questions h2').remove();
+            $('#questions p').remove();
+            question3();
+          });        
+        });
+      }
+
+      function question3() {
+        $('#questions button').remove();
+        $('#questions').append('<h2 id="quizHeader">Question 3</h2>');
+        $('#questions').append('<p>Where is the SRC?</p>');
+
+        const srcCoordinates = [
+          { lat: 34.23949465306344, lng: -118.52518429891968 },
+          { lat: 34.23945917524443, lng: -118.52514138357544 },
+          { lat: 34.239370480631436, lng: -118.52514138357544 },
+          { lat: 34.239370480631436, lng: -118.52471223013306 },
+          { lat: 34.23947691415579, lng: -118.52471223013306 },
+          { lat: 34.23947691415579, lng: -118.52466931478882 },
+          { lat: 34.240541241998265, lng: -118.5246478571167 },
+          { lat: 34.24055898068162, lng: -118.52471223013306 },
+          { lat: 34.24064767404238, lng: -118.52471223013306 },
+          { lat: 34.24066541270332, lng: -118.52516284124756 },
+          { lat: 34.24055898068162, lng: -118.52516284124756 },
+          { lat: 34.24055898068162, lng: -118.5252057565918 },
+          { lat: 34.23949465306344, lng: -118.52518429891968 },
+        ];
+
+        const srcPolygon = new google.maps.Polygon({ paths: srcCoordinates });
+
+        map.addListener('dblclick', (e) => {
+          locationBorder.setMap(null);
+          checkResponse(srcCoordinates, google.maps.geometry.poly.containsLocation(e.latLng, srcPolygon));
+          
+          document.getElementById('continue').addEventListener('click', () => {
+            $('#questions h2').remove();
+            $('#questions p').remove();
+            question4();
+          })
+        });
+      }
+
+      function question4() {
+        $('#questions button').remove();
+        $('#questions').append('<h2 id="quizHeader">Question 4</h2>');
+        $('#questions').append('<p>Where is the Campus Store Complex?</p>');
+
+        const campusStoreComplexCoordinates = [
+          { lat: 34.23779170088505, lng: -118.52866044180298 },
+          { lat: 34.23779170088505, lng: -118.52750172750855 },
+          { lat: 34.237188563727905, lng: -118.52745881216431 },
+          { lat: 34.23715308493704, lng: -118.52769484655762 },
+          { lat: 34.23702890905129, lng: -118.5276841183764 },
+          { lat: 34.23701116962409, lng: -118.52870335714722 },
+          { lat: 34.23779170088505, lng: -118.52866044180298 },
+        ];
+
+        const campusStoreComplexPolygon = new google.maps.Polygon({ paths: campusStoreComplexCoordinates });
+
+        map.addListener('dblclick', (e) => {
+          locationBorder.setMap(null);
+          checkResponse(campusStoreComplexCoordinates, google.maps.geometry.poly.containsLocation(e.latLng, campusStoreComplexPolygon));
+
+          document.getElementById('continue').addEventListener('click', () => {
+            $('#questions h2').remove();
+            $('#questions p').remove();
+            question5();
+          })        
+        });
+      }
+
+      function question5() {
+        $('#questions button').remove();
+        $('#questions').append('<h2 id="quizHeader">Question 5</h2>');
+        $('#questions').append('<p>Where is the Sierra Quad?</p>');
+
+        const jacarandaCoordinates = [
+          { lat: 34.239139874200376, lng: -118.52966895239258 },
+          { lat: 34.23793361488229, lng: -118.5296904100647 },
+          { lat: 34.23793361488229, lng: -118.52896084921265 },
+          { lat: 34.239139874200376, lng: -118.52896084921265 },
+          { lat: 34.239139874200376, lng: -118.52966895239258 },
+        ];
+
+        const jacarandaPolygon = new google.maps.Polygon({ paths: jacarandaCoordinates });
+
+        map.addListener('dblclick', (e) => {
+          locationBorder.setMap(null);
+          checkResponse(jacarandaCoordinates, google.maps.geometry.poly.containsLocation(e.latLng, jacarandaPolygon));
+          document.getElementById('continue').addEventListener('click', () => {
+            $('#questions h2').remove();
+            $('#questions p').remove();
+            quizComplete();
+          })
+        });
+      }
+
+      function checkResponse(jacarandaCoordinates, result) {
+        google.maps.event.clearInstanceListeners(map);
+
+        if(result){
+          locationBorder = new google.maps.Polyline({
+            path: jacarandaCoordinates,
+            geodesic: true,
+            strokeColor: 'green',
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+          })
+
+          locationBorder.setMap(map);
+          $('#questions').append('<p id="correctResponse">CORRECT!</p>')
+          responses.correct += 1;
+        }
+        else {
+          locationBorder = new google.maps.Polyline({
+            path: jacarandaCoordinates,
+            geodesic: true,
+            strokeColor: 'red',
+            strokeOpacity: 1.0,
+            strokeWeight: 2,
+          })
+          
+          locationBorder.setMap(map);
+          $('#questions').append('<p id="incorrectResponse">INCORRECT!</p>')
+          responses.incorrect += 1;
+        }
+        $('#questions').append('<button id="continue" type="button">Continue</button>')
+      }
+
+      function quizComplete() {
+        $('#questions button').remove();
+        $('.results').fadeIn();
+        $('.results p').append(`You scored ${responses.correct} out of a possible 5 correct!<br></br>Refresh the page to try again`);
+      }
+
+      $(window).on('ready', initMap);
+      $(window).on('load', question1);
+
+    </script>
+    <style>
+      /* Set the size of the div element that contains the map */
+      /* .quiz{
+
+      } */
+      #quizHeader {
+        text-align: center;
+      }
+      #questions{
+        float: left;
+        width: 50%;
+        text-align: center;
+      }
+      #questions #correctResponse{
+        color: green;
+      }
+      #questions #incorrectResponse{
+        color: red;
+      }
+      #questionHeader {
+        text-align: center;
+      }
+      #map {
+        float: right;
+        height: 30rem;
+        width: 50%;
+        /* aspect-ratio: 1/1; */
+      }
+      .results{
+        position: relative;
+        z-index: 10;
+        background-color: rgba(146, 168, 209, 0.952);
+        display: none;
+        border-style: solid;
+        border-color: gray;
+        border-radius: 1ex;
+        width: 50%;
+        aspect-ratio: 2/1;
+        margin: auto;
+        color: black;
+        /* justify-items: center; */
+      } 
+      .results p {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        height: 10ex;
+        text-align: center;
+      }
+    </style>
+    <title>Lab 3</title>
+  </head>
+  <body>
+    <div class="quiz">
+      <h1 id="quizHeader">CSUN Map Quiz</h3>
+      <div id="questions">
+        <h2 id="questionHeader"></h2>
+      </div>
+      <!--The div element for the map -->
+      <div id="map"></div>
+      <div class="results">
+        <p></p>
+      </div>
+    </div>
+  
+
+    <!-- 
+     The `defer` attribute causes the callback to execute after the full HTML
+     document has been parsed. For non-blocking uses, avoiding race conditions,
+     and consistent behavior across browsers, consider loading using Promises
+     with https://www.npmjs.com/package/@googlemaps/js-api-loader.
+    -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&v=weekly"
+      defer
+    ></script>
+  </body>
+</html>
